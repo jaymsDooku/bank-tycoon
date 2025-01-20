@@ -34,3 +34,25 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# Bank Tycoon
+
+Bank Tycoon is an interactive game, where the players manage a bank in an economy simulator. The goal of the game is to grow your bank and to dominate the other banks in the markets. To earn money, the player will be able to design products (current account, saving account, credit cards, business loans, automobile, mortgages), invest in stocks and bonds, and incur fees on financial services. However, the player will also have to manage the expenses of the bank by deciding how much to compensate employees, how much to invest in their technology to protect the firm from adverse events and mitigate risks, and failed loans.
+
+1. Build out economy simulation population-wise
+2. Build out dashboard for population
+3. Financial statements for Bank (Daily, Monthly, Quarterly)
+4. Build out basic financial products
+
+Simulated Person:
+- id
+- firstName
+- lastName
+- age
+- profession
+Each simulated person has a schedule of transactions based on their life.
+
+- Simulated People
+- Voxel-Based Map for Real Estate
+- Current Accounts
+- Savings Accounts

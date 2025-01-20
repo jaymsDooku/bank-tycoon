@@ -1,42 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --primary-color: #2B174F;
+  --secondary-color: #EFCB68;
+  --border-color: #2B174F;
+  --background-color: #E1EFE6;
+  --text-color: #2B174F;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --table-even-row: #CFC0ED;
 }
 
 * {
-  box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+body {
+  font-family: 'PT Sans', serif;
+  color: var(--text-color);
+  background-color: var(--background-color);
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+h1, h2, h3, h4, h5 {
+  font-family: 'Merriweather', serif;
+}
+
+h4 {
+  font-size: 18px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+p {
+  font-size: 12px;
+}
+
+.market-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.market-header > *:not(:first-child) {
+  margin-left: 10px;
+}
+
+.population-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.person-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  padding: 5px;
+}
+
+/* table start */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 12px;
+  text-align: left;
+}
+
+table thead tr {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  text-align: left;
+  font-weight: bold;
+}
+
+table th, table td {
+  padding: 4px 7px;
+}
+
+table tbody tr {
+  border-bottom: 1px solid var(--border-color);
+}
+
+table tbody tr:nth-of-type(even) {
+  background-color: var(--table-even-row);
+}
+
+table tbody tr:last-of-type {
+  border-bottom: 2px solid var(--primary-color);
+}
+
+table tbody tr.active-row {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+/* table end */
+
+/* cap start */
+
+.current-account-product {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  background-color: var(--background-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.current-account-product h4 {
+  margin-bottom: 12px;
+  color: var(--primary-color);
+}
+
+.current-account-product p {
+  margin: 4px 0;
+  color: var(--text-color);
+}
+
+/* cap end */
+
+/* button start */
+
+button {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+}
+
+button:active {
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+}
+
+button:disabled {
+  background-color: var(--border-color);
+  cursor: not-allowed;
+}
+
+/* button end */
+
+.market-container {
+  display: flex;
+}
+
+.side-panel {
+  width: 100px;
+  background-color: var(--background-color);
+  padding: 10px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.side-panel > *:hover {
+  cursor: pointer;
+  text-decoration: underline; 
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 10px;
 }
