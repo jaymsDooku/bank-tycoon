@@ -1,4 +1,4 @@
-
+import { v4 as uuidv4 } from "uuid";
 
 export enum ProfessionType {
     LOW_INCOME = "Low Income",
@@ -16,6 +16,18 @@ export interface Profession {
     type: ProfessionType
 };
 
+export interface Budget {
+    food: number;
+    housing: number;
+    transportation: number;
+    savings: number;
+
+    getFoodPortion: (income: number) => number;
+    getHousingPortion: (income: number) => number;
+    getTransportationPortion: (income: number) => number;
+    getSavingsPortion: (income: number) => number;
+};
+
 export interface Person {
     id: string;
     firstName: string;
@@ -25,6 +37,8 @@ export interface Person {
     profession: Profession;
     incomeFactor: number;
     getIncome: () => number;
+
+    budget: Budget;
 
     averageMonthlyWithdrawals: number; // Number of withdrawals they make monthly
     overdraftUsageLikelihood: number; // Likelihood of using overdraft (0 to 1)
@@ -47,9 +61,14 @@ export interface Transaction {
 
 export interface Account {
     id: string;
+    dayCreated: number;
     accountOwner: string;
     balance: number;
     transactions?: Transaction[];
+
+    addTransaction: (market: Market, amount: number, type: TransactionType) => void;
+    deposit: (market: Market, amount: number) => void;
+    withdraw: (market: Market, amount: number) => void;
 };
 
 export interface CurrentAccountProduct {
@@ -81,23 +100,10 @@ export interface Bank {
     name: string;
     accounts: Map<string, Account[]>;
     currentAccountProduct: CurrentAccountProduct;
+
+    createAccount(ownerId: string, day: number, initialDeposit: number): Account;
+    getCurrentAccount(ownerId: string): Account;
 };
-
-export function generateRandomBank(existingBankNames: string[]): Bank {
-    const bankNames = ["First National Bank", "Global Trust Bank", "Pioneer Savings", "United Financial", "Community Bank"];
-    let randomName = bankNames[Math.floor(Math.random() * bankNames.length)];
-
-    // Ensure the generated name is unique
-    while (existingBankNames.includes(randomName)) {
-        randomName = bankNames[Math.floor(Math.random() * bankNames.length)];
-    }
-
-    return {
-        name: randomName,
-        accounts: new Map<string, Account[]>(),
-        currentAccountProduct: generateRandomCurrentAccountProduct()
-    };
-}
 
 export interface Market {
     name: string;
@@ -107,14 +113,10 @@ export interface Market {
     playerBank: Bank;
     otherBanks: Bank[];
 
+    initialize: () => void;
+    nextDay: () => void;
+    createAccounts: () => void;
+    getCurrentAccount: (ownerId: string) => Account;
     getCurrentDate: () => Date;
 };
-
-export function newBank(name: string, currentAccountProduct: CurrentAccountProduct, accounts: Map<string, Account[]>): Bank {
-    return {
-        name,
-        currentAccountProduct,
-        accounts
-    };
-}
 

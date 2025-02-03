@@ -1,10 +1,12 @@
 'use client'
 
 import { ReactNode, useEffect, useState } from "react";
-import { Account, newBank, newMarket, Market, Person, CurrentAccountProduct, generateRandomCurrentAccountProduct } from "./model/bank-interface";
+import { Account, Market, Person, CurrentAccountProduct, generateRandomCurrentAccountProduct } from "./model/bank-interface";
 import Table from "./component/table";
-import { MarketImpl } from "./model/bank-impl";
 import Population from "./component/population";
+import Calendar from "./component/calendar";
+import { MarketImpl } from "./model/market-impl";
+import { BankImpl } from "./model/bank-impl";
 
 interface PersonProps {
   person: Person;
@@ -91,6 +93,7 @@ interface MarketProps {
 
 function ViewMarket({ market }: MarketProps) {
   const [mainContentKey, setMainContentKey] = useState<keyof typeof mainContent>('population');
+  const [currentDate, setCurrentDate] = useState<Date>(market.getCurrentDate());
 
   const bankCurrentAccountProducts = market.otherBanks.map(bank => ({
     bankName: bank.name,
@@ -106,7 +109,7 @@ function ViewMarket({ market }: MarketProps) {
   const mainContent = {
     'population': (): ReactNode => {
       return (
-        <Population population={market.population} bankCurrentAccountProducts={bankCurrentAccountProducts}/>
+        <Population population={market.population} market={market} bankCurrentAccountProducts={bankCurrentAccountProducts}/>
       );
     },
     'products': (): ReactNode => {
@@ -117,6 +120,15 @@ function ViewMarket({ market }: MarketProps) {
           <CurrentAccountProductTable bankCurrentAccountProducts={bankCurrentAccountProducts} />
         </div>
       );
+    },
+    'calendar': (): ReactNode => {
+      return (
+        <Calendar market={market} events={[
+          { date: new Date(2025, 0, 1), title: 'New Year\'s Day' },
+          { date: new Date(2025, 0, 14), title: 'Meeting' },
+          { date: new Date(2025, 0, 21), title: 'Conference' },
+        ]} />
+      );
     }
   };
 
@@ -124,8 +136,11 @@ function ViewMarket({ market }: MarketProps) {
     <div>
       <div className="market-header">
         <h2>{market.name}</h2>
-        <p>{market.getCurrentDate().toDateString()}</p>
-        <button>Next Day</button>
+        <p>{currentDate.toDateString()}</p>
+        <button onClick={() => {
+          market.nextDay();
+          setCurrentDate(market.getCurrentDate());
+        }}>Next Day</button>
       </div>
       <div className="market-container">
         <div className="side-panel">
@@ -134,6 +149,9 @@ function ViewMarket({ market }: MarketProps) {
           </div>
           <div onClick={() => setMainContentKey('products')}>
             <p>Products</p>
+          </div>
+          <div onClick={() => setMainContentKey('calendar')}>
+            <p>Calendar</p>
           </div>
         </div>
         <div className="main-content">
@@ -150,7 +168,7 @@ export default function Home() {
 
   useEffect(() => {
     const generatedMarket = new MarketImpl("Lancashire Market", 10, 
-      newBank("Lancaster Bank", generateRandomCurrentAccountProduct(), new Map<string, Account[]>()), 4
+      new BankImpl("Lancaster Bank", generateRandomCurrentAccountProduct()), 4
     );
     setMarket(generatedMarket);
   }, []);

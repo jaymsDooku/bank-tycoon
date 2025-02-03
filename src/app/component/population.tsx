@@ -1,12 +1,22 @@
-import { BankCurrentAccountProduct, Person } from "../model/bank-interface";
+import { useEffect, useState } from "react";
+import { BankCurrentAccountProduct, Market, Person, TransactionType } from "../model/bank-interface";
 import Table from "./table";
+import Calendar from "./calendar";
 
 interface PopulationProps {
   population: Person[];
+  market: Market;
   bankCurrentAccountProducts: BankCurrentAccountProduct[]
 }
 
-function PopulationTable({ population, bankCurrentAccountProducts }: PopulationProps) {
+interface PopulationTableProps {
+  population: Person[];
+  market: Market;
+  bankCurrentAccountProducts: BankCurrentAccountProduct[]
+  setSelectedPerson: (person: Person) => void;
+}
+
+function PopulationTable({ population, market, bankCurrentAccountProducts, setSelectedPerson }: PopulationTableProps) {
   const columns = [
      { key: 'id', header: 'ID' },
      { key: 'firstName', header: 'First Name' },
@@ -18,16 +28,53 @@ function PopulationTable({ population, bankCurrentAccountProducts }: PopulationP
      }}
   ];
   return (
-    <Table data={population} columns={columns} />
+    <Table data={population} columns={columns} onRowClick={setSelectedPerson}/>
   );
 }
 
-export default function Population({ population, bankCurrentAccountProducts }: PopulationProps) {
+export default function Population({ population, market, bankCurrentAccountProducts }: PopulationProps) {
+    const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
+    const [events, setEvents] = useState<{ date: Date; title: string }[]>([]);
+
+    useEffect(() => {
+      console.log('set select person');
+      if (selectedPerson) {
+        console.log('selectedPerson: ', selectedPerson);
+        const currentAccount = market.getCurrentAccount(selectedPerson.id);
+        if (currentAccount && currentAccount.transactions) {
+          const newEvents = currentAccount.transactions.map((transaction) => {
+            return {
+              date: transaction.date,
+              title: (transaction.type === TransactionType.DEPOSIT ? '+' : '-') + transaction.amount
+            };
+          });
+          setEvents(newEvents);
+        } else {
+          setEvents([]);
+        }
+      } else {
+        setEvents([]);
+      }
+    }, [selectedPerson, market]);
+
     return (
         <div>
           <h3>Population</h3>
           <div className="population-container">
-            <PopulationTable population={population} bankCurrentAccountProducts={bankCurrentAccountProducts} />
+            <PopulationTable population={population} market={market} bankCurrentAccountProducts={bankCurrentAccountProducts} setSelectedPerson={setSelectedPerson} />
+            {selectedPerson && (
+              <div>
+                <div className="selected-person">
+                  <h4>Selected Person</h4>
+                  <p>{selectedPerson.firstName} {selectedPerson.lastName}</p>
+                  <p>Age: {selectedPerson.age}</p>
+                  <p>Profession: {selectedPerson.profession.type}</p>
+                  <p>Income: {selectedPerson.getIncome()}</p>
+                  <p>Target Current Account Product: {selectedPerson.decideCurrentAccountProduct(bankCurrentAccountProducts).bankName}</p>
+                </div>
+                <Calendar market={market} events={events} />
+              </div>
+            )}
           </div>
         </div>
     );

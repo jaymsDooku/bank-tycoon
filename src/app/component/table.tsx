@@ -3,9 +3,10 @@ import React from 'react';
 interface TableProps<T> {
     data: T[];
     columns: { key: string; header: string, render?: (item: T) => React.ReactNode }[];
+    onRowClick?: (item: T) => void;
   }
   
-  export default function Table<T>({ data, columns }: TableProps<T>) {
+  export default function Table<T>({ data, columns, onRowClick }: TableProps<T>) {
     return (
       <table>
         <thead>
@@ -17,7 +18,7 @@ interface TableProps<T> {
         </thead>
         <tbody>
           {data.map((item, index) => (
-            <tr key={index}>
+            <tr key={index} onClick = {() => onRowClick && onRowClick(item)}>
               {columns.map((column) => (
                 <td key={column.key}>
                 {column.render ? column.render(item) : (item as any)[column.key]}
