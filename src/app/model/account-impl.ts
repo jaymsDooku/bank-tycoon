@@ -16,21 +16,22 @@ export class AccountImpl implements Account {
         this.transactions = transactions || [];
     }
 
-    addTransaction(market: Market, amount: number, type: TransactionType) {
+    addTransaction(market: Market, amount: number, type: TransactionType, comment?: string) {
         this.balance += type === TransactionType.DEPOSIT ? amount : -amount;
         this.transactions.push({
             id: uuidv4(),
             amount,
             date: market.getCurrentDate(),
-            type
+            type,
+            comment
         });
     }
 
-    deposit(market: Market, amount: number) {
-        this.addTransaction(market, amount, TransactionType.DEPOSIT);
+    deposit(market: Market, amount: number, comment?: string) {
+        this.addTransaction(market, amount, TransactionType.DEPOSIT, comment);
     }
 
-    withdraw(market: Market, amount: number) {
-        this.addTransaction(market, amount, TransactionType.WITHDRAW);
+    withdraw(market: Market, amount: number, comment?: string) {
+        this.addTransaction(market, amount, TransactionType.WITHDRAW, comment);
     }
 }

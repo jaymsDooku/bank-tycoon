@@ -10,35 +10,45 @@ export class MarketImpl implements Market {
     playerBank: Bank;
     otherBanks: Bank[];
 
-    constructor(name: string, totalPopulation: number, playerBank: Bank, otherBankCount: number) {
+    constructor(name: string, startDate: Date, day: number, population: Person[], playerBank: Bank, otherBanks: Bank[]) {
         this.name = name;
-        this.startDate = new Date(2025, 0, 1); // January 1, 2025
-        this.day = 0;
-        this.population = [];
-        for (let i = 0; i < totalPopulation; i++) {
-            this.population.push(generateRandomPerson());
-        }
+        this.startDate = startDate;
+        this.day = day;
+        this.population = population;
         this.playerBank = playerBank;
-        this.otherBanks = [];
+        this.otherBanks = otherBanks;
+    }
+
+    static newMarket(name: string, totalPopulation: number, playerBank: Bank, otherBankCount: number): Market {
+        const population = [];
+        for (let i = 0; i < totalPopulation; i++) {
+            population.push(generateRandomPerson());
+        }
+
+        const otherBanks = [];
         const existingBankNames = new Set<string>();
         existingBankNames.add(playerBank.name);
 
         for (let i = 0; i < otherBankCount; i++) {
             const newBank = generateRandomBank(Array.from(existingBankNames));
-            this.otherBanks.push(newBank);
+            otherBanks.push(newBank);
             existingBankNames.add(newBank.name);
         }
-
-        this.initialize();
+        const result = new MarketImpl(name, new Date(2025, 0, 1), 0, population, playerBank, otherBanks);
+        result.initialize();
+        return result;
     }
 
     initialize() {
         this.createAccounts();
     }
 
+    
+
     paySalaries() {
         const currentDate = this.getCurrentDate();
         const incomeDay = currentDate.getDate() === 1;
+        console.log('incomeDay: ', incomeDay);
         if (!incomeDay) {
             return;
         }
@@ -48,7 +58,7 @@ export class MarketImpl implements Market {
             const accounts = this.playerBank.accounts.get(person.id);
             const account = accounts ? accounts[0] : undefined;
             if (account) {
-                account.deposit(this, income);
+                account.deposit(this, income, 'Salary');
             }
         });
     }
@@ -65,16 +75,14 @@ export class MarketImpl implements Market {
             const accounts = this.playerBank.accounts.get(person.id);
             const account = accounts ? accounts[0] : undefined;
             if (account) {
-                account.withdraw(this, rent);
+                account.withdraw(this, rent, 'Rent');
             }
         });
     }
 
     nextDay() {
         const date: Date = this.getCurrentDate();
-        console.log('date: ', date.getDate());
         if (date.getDate() === 1) {
-            console.log('paying salaries');
             this.paySalaries();
         } else if (date.getDate() === 2) {
             this.takeRents();
@@ -95,8 +103,13 @@ export class MarketImpl implements Market {
     }
 
     getCurrentDate(): Date {
+        console.log('startDate: ', this.startDate);
         const currentDate = new Date(this.startDate);
         currentDate.setDate(this.startDate.getDate() + this.day);
         return currentDate;
+    }
+
+    clone(): Market {
+        return new MarketImpl(this.name, this.startDate, this.day, this.population, this.playerBank, this.otherBanks);
     }
 }

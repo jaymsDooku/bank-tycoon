@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Market } from '../model/bank-interface';
+import Button from './ui/button/button';
 
 interface CalendarProps {
   market: Market;
@@ -57,9 +58,9 @@ const Calendar: React.FC<CalendarProps> = ({ market, events = [], onDateClick })
   return (
     <div className="calendar">
       <div className="calendar-header">
-        <button onClick={handlePrevMonth}>Prev</button>
+        <Button onClick={handlePrevMonth}>Prev</Button>
         <h2>{currentDate.toLocaleString('default', { month: 'long' })} {currentDate.getFullYear()}</h2>
-        <button onClick={handleNextMonth}>Next</button>
+        <Button onClick={handleNextMonth}>Next</Button>
       </div>
       <div className="calendar-grid">
         {daysOfWeek.map((day) => (

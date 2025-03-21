@@ -57,6 +57,7 @@ export interface Transaction {
     amount: number;
     date: Date;
     type: TransactionType;
+    comment?: string;
 }
 
 export interface Account {
@@ -66,9 +67,9 @@ export interface Account {
     balance: number;
     transactions?: Transaction[];
 
-    addTransaction: (market: Market, amount: number, type: TransactionType) => void;
-    deposit: (market: Market, amount: number) => void;
-    withdraw: (market: Market, amount: number) => void;
+    addTransaction: (market: Market, amount: number, type: TransactionType, comment?: string) => void;
+    deposit: (market: Market, amount: number, comment?: string) => void;
+    withdraw: (market: Market, amount: number, comment?: string) => void;
 };
 
 export interface CurrentAccountProduct {
@@ -118,5 +119,6 @@ export interface Market {
     createAccounts: () => void;
     getCurrentAccount: (ownerId: string) => Account;
     getCurrentDate: () => Date;
+    clone: () => Market;
 };
 
